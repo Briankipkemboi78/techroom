@@ -1,22 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .models import Room, Topic
 from .forms import RoomForm
 
-
-# Create your views here.
-
-# rooms = [
-#     {'id':1, 'name':'Lets Learn Python!' },
-#     {'id':2, 'name':'Design this up!' },
-#     {'id':3, 'name':'Learn django!' },
-#     {'id':4, 'name':'Its 2024!' },
-#     {'id':5, 'name':'Go Hard!' },
-
-# ]
 
 def loginPage(request):
     if request.method == 'POST':
@@ -38,6 +28,11 @@ def loginPage(request):
 
     context = {}
     return render(request, 'base/login_register.html', context)
+
+
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
 
 
 def home(request):
@@ -62,6 +57,7 @@ def room(request, pk):
     return render(request, 'base/room.html', context)
 
 
+@login_required(login_url='/login')
 def createRoom(request):
     form = RoomForm()
 
@@ -74,7 +70,7 @@ def createRoom(request):
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
 
-
+@login_required(login_url='/login')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
@@ -88,7 +84,7 @@ def updateRoom(request, pk):
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
 
-
+@login_required(login_url='/login')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
     if request.method == 'POST':
