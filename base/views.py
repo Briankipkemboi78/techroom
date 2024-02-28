@@ -10,6 +10,7 @@ from .forms import RoomForm
 
 
 def loginPage(request):
+    page = 'login'
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -31,13 +32,18 @@ def loginPage(request):
         else:
             messages.error(request, 'Username OR password does not exist')
 
-    context = {}
+    context = {'page': page}
     return render(request, 'base/login_register.html', context)
 
 
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
+
+def registerPage(request):
+    page = 'register'
+    return render(request, 'base/login_register.html')
 
 
 def home(request):
@@ -75,6 +81,7 @@ def createRoom(request):
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
 
+
 @login_required(login_url='/login')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
@@ -91,6 +98,7 @@ def updateRoom(request, pk):
 
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
+
 
 @login_required(login_url='/login')
 def deleteRoom(request, pk):
