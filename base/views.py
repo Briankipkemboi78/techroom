@@ -109,7 +109,9 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('home')
 
     context = {'form': form}
@@ -149,7 +151,6 @@ def deleteRoom(request, pk):
 @login_required(login_url='/login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
-
     if request.user != message.user:
         return HttpResponse('You are not allowed here!')
 
